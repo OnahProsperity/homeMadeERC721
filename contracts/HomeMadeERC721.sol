@@ -311,7 +311,6 @@ contract HomeMadeERC721 is Context, ERC165 {
     function _burn(uint256 tokenId) internal virtual {
         homeMadeMapped.libStorage storage ds = homeMadeMapped.diamondStorage();
         address owner = HomeMadeERC721.ownerOf(tokenId);
-
         _beforeTokenTransfer(owner, address(0), tokenId);
 
         // Clear approvals

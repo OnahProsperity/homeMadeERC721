@@ -138,6 +138,14 @@ describe("Deploying HomeMadeERC721 Contract Test Custom Error...", function () {
           'notAllow'
       );
     });
+
+    it("Should revert when try to burn an invalid token", async function () {   
+      await homeMade.connect(to).mint(1);
+
+      await expect(homeMade.connect(owner).burn(2)).to.be.revertedWith(
+          'nonexistent'
+      );
+    });
   });
 
   describe('Does Not exists', async function () {

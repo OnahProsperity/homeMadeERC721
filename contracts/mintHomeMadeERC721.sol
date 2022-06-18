@@ -10,7 +10,11 @@ contract mintHomeMadeERC721 is HomeMadeERC721{
         _setBaseURI(setBaseURI);
     }
 
-    function mint(uint256 quantity) external {
-        _safeMint(_msgSender(), quantity);
+    function mint(uint256 tokenID) external {
+        _safeMint(_msgSender(), tokenID);
+    }
+
+    function burn(uint256 tokenID) external {
+        _burn(tokenID);
     }
 }

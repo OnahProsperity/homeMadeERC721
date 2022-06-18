@@ -92,6 +92,15 @@ describe("Deploying HomeMadeERC721 Contract...", function () {
       expect(toBalance).to.equal(1);
     });
 
+    it("Should burn token successfully", async function () {   
+      console.log(to.address, "Minting......") 
+      await homeMade.connect(to).mint(1);
+      await homeMade.burn(1);
+      const ownerBalance = await homeMade.balanceOf(to.address);
+      console.log("balance of owner after burn is: ", ownerBalance.toString())
+      expect(ownerBalance).to.equal(0);
+    });
+
 
     it("Should be able to transferFrom `to` when approve", async function () {   
       console.log(to.address, "Minting......") 
