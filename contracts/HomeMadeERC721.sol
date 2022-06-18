@@ -21,11 +21,16 @@ contract HomeMadeERC721 is Context, ERC165 {
 /**
      * @dev See {IERC165-supportsInterface}.
      */
-     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+        // The interface IDs are constants representing the first 4 bytes of the XOR of
+        // all function selectors in the interface. See: https://eips.ethereum.org/EIPS/eip-165
+        // e.g. `bytes4(i.functionA.selector ^ i.functionB.selector ^ ...)`
         return
-            interfaceId == type(IERC721).interfaceId ||
-            super.supportsInterface(interfaceId);
+            interfaceId == 0x01ffc9a7 || // ERC165 interface ID for ERC165.
+            interfaceId == 0x80ac58cd || // ERC165 interface ID for ERC721.
+            interfaceId == 0x5b5e139f; // ERC165 interface ID for ERC721Metadata.
     }
+
     /**
      * @dev See {IERC721-balanceOf}.
      */
