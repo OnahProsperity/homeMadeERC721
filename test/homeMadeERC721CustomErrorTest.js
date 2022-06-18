@@ -1,5 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { constants } = require('@openzeppelin/test-helpers');
+const { ZERO_ADDRESS } = constants;
 
 describe("Deploying HomeMadeERC721 Contract Test Custom Error...", function () {
 
@@ -94,6 +96,12 @@ describe("Deploying HomeMadeERC721 Contract Test Custom Error...", function () {
       expect(toBalance).to.equal(1);
     });
 
+    it("Should revert when checking ZERO_ADDRESS balance", async function () {   
+      await expect(homeMade.balanceOf(ZERO_ADDRESS)).to.be.revertedWith(
+        'zeroAddress'
+    );
+    });
+
     it("Should revert when approving self", async function () {   
       console.log(to.address, "Minting......") 
       await homeMade.connect(to).mint(1);
@@ -109,6 +117,15 @@ describe("Deploying HomeMadeERC721 Contract Test Custom Error...", function () {
 
       await expect(homeMade.connect(to).approve(from.address, 2)).to.be.revertedWith(
           'nonexistent'
+      );
+    });
+
+    it("Should revert with noneexistence for invalid token", async function () {   
+      console.log(to.address, "Minting......") 
+      await homeMade.connect(to).mint(1);
+
+      await expect(homeMade.connect(to).getApproved(2)).to.be.revertedWith(
+          'nonexistentToken'
       );
     });
 
