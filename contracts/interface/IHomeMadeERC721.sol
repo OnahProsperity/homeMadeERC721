@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 import "./IERC165.sol";
-interface IERC721 is IERC165 {
+interface IHomeMadeERC721 is IERC165 {
     /**
      * @dev Returns the token collection name.
      */

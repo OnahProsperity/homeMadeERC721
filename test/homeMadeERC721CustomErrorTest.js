@@ -1,17 +1,17 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("Deploying HomeMadeERC721 Contract...", function () {
+describe("Deploying HomeMadeERC721 Contract Test Custom Error...", function () {
 
-  let homeMade, owner, from, to, operator;
+  let homeMade, owner, from, to;
   beforeEach(async function () {
     const HomeMadeERC721 = await ethers.getContractFactory("mintHomeMadeERC721");
     homeMade = await HomeMadeERC721.deploy("Home Made ERC721", "HMERC721");
     await homeMade.deployed();
-    [owner, from, to, operator, _] = await ethers.getSigners();
+    [owner, from, to, _] = await ethers.getSigners();
   });
 
-  describe("Write functionality to Home Made ERC721 Contract", function () {
+  describe("Write functionality to Home Made ERC721 Contract Revert", function () {
 
     it("Should revert when owner doesn't have enough balance", async function () {    
       const fromBalance = await homeMade.balanceOf(from.address);
@@ -31,7 +31,6 @@ describe("Deploying HomeMadeERC721 Contract...", function () {
       expect(fromNewBalance).to.equal(0);
       expect(toBalance).to.equal(0);
     });
-
 
     it("Should Revert when Token ID that has been minted want to be minted again", async function () {    
       await homeMade.mint(1);
@@ -67,34 +66,69 @@ describe("Deploying HomeMadeERC721 Contract...", function () {
 
         expect(fromNewBalance).to.equal(0);
         expect(toBalance).to.equal(1);
-      });
+    });
 
-      it("Should revert when transferring to contract address", async function () {   
-        console.log(to.address, "Minting......") 
-        await homeMade.connect(to).mint(1);
-        const to_Balance = await homeMade.balanceOf(to.address);
-        expect(to_Balance).to.equal(1);
-        const contractBalance = await homeMade.balanceOf(homeMade.address);
+    it("Should revert when transferring to contract address", async function () {   
+      console.log(to.address, "Minting......") 
+      await homeMade.connect(to).mint(1);
+      const to_Balance = await homeMade.balanceOf(to.address);
+      expect(to_Balance).to.equal(1);
+      const contractBalance = await homeMade.balanceOf(homeMade.address);
 
-        console.log( "Balance of to transfer: ", to_Balance.toString(),"HMERC721")
-        console.log("contract address balance is, ", contractBalance.toString(), "before", to.address, "tries transfer in to it." )
-        console.log("From Address", homeMade.address, "initiated a trasferFrom to", to.address)
-        expect(contractBalance).to.equal(0);
+      console.log( "Balance of to transfer: ", to_Balance.toString(),"HMERC721")
+      console.log("contract address balance is, ", contractBalance.toString(), "before", to.address, "tries transfer in to it." )
+      console.log("From Address", homeMade.address, "initiated a trasferFrom to", to.address)
+      expect(contractBalance).to.equal(0);
 
-        await expect(homeMade.connect(to).safeTransfer(homeMade.address, 1)).to.be.revertedWith(
-            'NonReceiver_Implementer'
-        );
+      await expect(homeMade.connect(to).safeTransfer(homeMade.address, 1)).to.be.revertedWith(
+          'NonReceiver_Implementer'
+      );
 
-        const ContractNewBalance = await homeMade.balanceOf(homeMade.address);
-        console.log("after to address, ", to.address, "tried transferring to", homeMade.address, "and it revert, balance remain: ",ContractNewBalance.toString() )
-        
-        const toBalance = await homeMade.balanceOf(to.address);
-        console.log( "Balance of to decrease to", toBalance.toString(),"HMERC721")
+      const ContractNewBalance = await homeMade.balanceOf(homeMade.address);
+      console.log("after to address, ", to.address, "tried transferring to", homeMade.address, "and it revert, balance remain: ",ContractNewBalance.toString() )
+      
+      const toBalance = await homeMade.balanceOf(to.address);
+      console.log( "Balance of to decrease to", toBalance.toString(),"HMERC721")
 
-        expect(ContractNewBalance).to.equal(0);
-        expect(toBalance).to.equal(1);
-      });
+      expect(ContractNewBalance).to.equal(0);
+      expect(toBalance).to.equal(1);
+    });
 
+    it("Should revert when approving self", async function () {   
+      console.log(to.address, "Minting......") 
+      await homeMade.connect(to).mint(1);
+
+      await expect(homeMade.connect(to).approve(to.address, 1)).to.be.revertedWith(
+          'selfApproval'
+      );
+    });
+
+    it("Should revert when approving a token ID that is not yours self", async function () {   
+      console.log(to.address, "Minting......") 
+      await homeMade.connect(to).mint(1);
+
+      await expect(homeMade.connect(to).approve(from.address, 2)).to.be.revertedWith(
+          'nonexistent'
+      );
+    });
+
+    it("Should revert when approving a token ID that is not yours self", async function () {   
+      console.log(to.address, "Minting......") 
+      await homeMade.connect(to).mint(1);
+      await homeMade.connect(to).mint(2);
+
+      await expect(homeMade.connect(owner).approve(from.address, 2)).to.be.revertedWith(
+          'notAllow'
+      );
+    });
+  });
+
+  describe('Does Not exists', async function () {
+    it('verifies Invalid tokens', async function () {
+      await expect(homeMade.tokenURI(1)).to.be.revertedWith(
+        'URINonexistent'
+      );
+    });
   });
 
 });

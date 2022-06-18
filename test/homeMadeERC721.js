@@ -3,12 +3,14 @@ const { ethers } = require("hardhat");
 
 describe("Deploying HomeMadeERC721 Contract...", function () {
 
-  let homeMade, owner, from, to, operator;
+  let homeMade, owner, from, to, operator, pol;
+  const polygon = "POLYGON NETWORK";
   beforeEach(async function () {
     const HomeMadeERC721 = await ethers.getContractFactory("mintHomeMadeERC721");
     homeMade = await HomeMadeERC721.deploy("Home Made ERC721", "HMERC721");
     await homeMade.deployed();
     [owner, from, to, operator, _] = await ethers.getSigners();
+    pol = ethers.utils.formatBytes32String(polygon)
   });
 
   describe("It should read necessary functions from Home Made ERC721 Contract", function () {
@@ -117,7 +119,14 @@ describe("Deploying HomeMadeERC721 Contract...", function () {
       expect(fromNewBalance).to.equal(1);
       expect(toBalance).to.equal(0);
     });
+  });
 
+  describe('exists', async function () {
+    it('verifies valid tokens', async function () {
+      await homeMade.mint(1);
+      const validToken = await homeMade.tokenURI(1);      
+      expect(validToken.toString()).to.equal("ipfs://bafkreih6n5re2qqqwzvdl5jrgzhfmq6lm3qb7ska2vdwmub5sbgehmgpvm/1");
+    });
   });
 
 });
