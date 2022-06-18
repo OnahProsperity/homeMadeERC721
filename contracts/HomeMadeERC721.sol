@@ -10,8 +10,6 @@ pragma solidity ^0.8.0;
 contract HomeMadeERC721 is Context, ERC165 {
     // using Address for address;
     using Strings for uint256;
-
-    string public setBaseURI = "ipfs://bafkreih6n5re2qqqwzvdl5jrgzhfmq6lm3qb7ska2vdwmub5sbgehmgpvm/";
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
@@ -150,10 +148,21 @@ contract HomeMadeERC721 is Context, ERC165 {
      * token will be the concatenation of the `baseURI` and the `tokenId`. Empty
      * by default, can be overridden in child contracts.
      */
-     function _baseURI() internal view virtual returns (string memory) {
-        return setBaseURI;
+     function _baseURI() internal view returns (string memory) {
+        homeMadeMapped.libStorage storage ds = homeMadeMapped.diamondStorage();
+        return ds._baseURI;
     }
 
+
+    /**
+     * @dev set Base URI for computing {tokenURI}. If set, the resulting URI for each
+     * token will be the concatenation of the `baseURI` and the `tokenId`. Empty
+     * by default, can be overridden in child contracts.
+     */
+     function _setBaseURI(string memory _uri) internal {
+        homeMadeMapped.libStorage storage ds = homeMadeMapped.diamondStorage();
+        ds._baseURI = _uri;
+    }
 
 
     /**

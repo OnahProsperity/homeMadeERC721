@@ -13,6 +13,9 @@ library homeMadeMapped {
     // Token symbol
     string _symbol;
 
+    // base URI;
+    string _baseURI;
+
     // Mapping from token ID to owner address
     mapping(uint256 => address) _owners;
 
