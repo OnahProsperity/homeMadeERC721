@@ -82,7 +82,7 @@ contract HomeMadeERC721 is Context, ERC165 {
     function approve(address to, uint256 tokenId) public virtual override {
         address owner = HomeMadeERC721.ownerOf(tokenId);
         if (to == owner) revert selfApproval();
-        if (_msgSender() != owner || !(isApprovedForAll(owner, _msgSender()))) revert notAllow();
+        if (_msgSender() != owner || (isApprovedForAll(owner, to))) revert notAllow();
         _approve(to, tokenId);
     }
 
@@ -164,7 +164,7 @@ contract HomeMadeERC721 is Context, ERC165 {
         uint256 tokenId,
         bytes memory _data
     ) public virtual override {
-        if (!(_isApprovedOrOwner(_msgSender(), tokenId))) revert notApproved();
+        if (!(_isApprovedOrOwner(to, tokenId))) revert notApproved();
         _safeTransfer(from, to, tokenId, _data);
     }
 
