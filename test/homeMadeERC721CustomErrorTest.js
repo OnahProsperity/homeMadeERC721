@@ -1,0 +1,74 @@
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+
+describe("Deploying HomeMadeERC721 Contract...", function () {
+
+  let homeMade, owner, from, to, operator;
+  beforeEach(async function () {
+    const HomeMadeERC721 = await ethers.getContractFactory("mintHomeMadeERC721");
+    homeMade = await HomeMadeERC721.deploy("Home Made ERC721", "HMERC721");
+    await homeMade.deployed();
+    [owner, from, to, operator, _] = await ethers.getSigners();
+  });
+
+  describe("Write functionality to Home Made ERC721 Contract", function () {
+
+    it("Should revert when owner doesn't have enough balance", async function () {    
+      const fromBalance = await homeMade.balanceOf(from.address);
+      console.log( "Balance of from is: ", fromBalance.toString(),"HMERC721")
+      console.log("From Address", from.address, "initiated a trasfer to", to.address)
+      expect(fromBalance).to.equal(0);
+      console.log("from: ", from.address, "Initiating a transfer of ID or 1 to: ", to.address, "it expected to revert")
+
+      await expect(homeMade.connect(from).safeTransfer(to.address, 1)).to.be.revertedWith(
+        'nonexistent'
+      );
+
+      const fromNewBalance = await homeMade.balanceOf(from.address);
+      console.log("after from address, ", from.address, "tried transfering 1", "to to address:", to.address, "and it failed", "new balance of from is: ",fromNewBalance.toString() )
+      const toBalance = await homeMade.balanceOf(to.address);
+      console.log( "Balance of to remains", toBalance.toString(),"HMERC721")
+      expect(fromNewBalance).to.equal(0);
+      expect(toBalance).to.equal(0);
+    });
+
+
+    it("Should Revert when Token ID that has been minted want to be minted again", async function () {    
+      await homeMade.mint(1);
+      await expect(homeMade.mint(1)).to.be.revertedWith(
+        'alreadyMinted'
+      );
+      const ownerBalance = await homeMade.balanceOf(owner.address);
+      console.log( "Balance of owner increased", ownerBalance.toString(),"HMERC721")
+      expect(ownerBalance).to.equal(1);
+    });
+
+    it("Should revert when `from` tries to transfer from `to` when not approve", async function () {   
+        console.log(to.address, "Minting......") 
+        await homeMade.connect(to).mint(1);
+        const to_Balance = await homeMade.balanceOf(to.address);
+        expect(to_Balance).to.equal(1);
+        const fromBalance = await homeMade.balanceOf(from.address);
+
+        console.log( "Balance of to transfer: ", to_Balance.toString(),"HMERC721")
+        console.log("from balance is, ", fromBalance.toString(), "before initiating transfer from", to.address )
+        console.log("From Address", from.address, "initiated a trasferFrom to", to.address)
+        expect(fromBalance).to.equal(0);
+
+        await expect(homeMade.connect(from).transferFrom(to.address, from.address,  1)).to.be.revertedWith(
+            'notApproved'
+        );
+
+        const fromNewBalance = await homeMade.balanceOf(from.address);
+        console.log("after from address, ", from.address, "tried transferring from", to.address, "and it revert, balance remain: ",fromNewBalance.toString() )
+        
+        const toBalance = await homeMade.balanceOf(to.address);
+        console.log( "Balance of to decrease to", toBalance.toString(),"HMERC721")
+
+        expect(fromNewBalance).to.equal(0);
+        expect(toBalance).to.equal(1);
+      });
+
+  });
+
+});

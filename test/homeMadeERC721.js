@@ -21,9 +21,17 @@ describe("Deploying HomeMadeERC721 Contract...", function () {
 
     it("Should Mint successfully and Get Actual Balance", async function () {    
       await homeMade.mint(1);
+      await homeMade.mint(2);
       const ownerBalance = await homeMade.balanceOf(owner.address);
       console.log( "Balance of owner increased", ownerBalance.toString(),"HMERC721")
-      expect(ownerBalance).to.equal(1);
+      expect(ownerBalance).to.equal(2);
+    });
+
+    it("Should get the Owner of token ID", async function () {    
+      await homeMade.mint(1);
+      const tokenIDOwner = await homeMade.ownerOf(1);
+      console.log( "tokenID owner is", tokenIDOwner.toString(),"HMERC721")
+      expect(tokenIDOwner).to.equal(owner.address);
     });
 
     it("Should get correct owner of token ID", async function () {    
@@ -82,21 +90,37 @@ describe("Deploying HomeMadeERC721 Contract...", function () {
       expect(toBalance).to.equal(1);
     });
 
-    // it("Should revert when owner doesn't have enough balance", async function () {    
-    //   // await homeMade.connect(from).mint(1);
-    //   const fromBalance = await homeMade.balanceOf(from.address);
-    //   console.log( "Balance of from increased", fromBalance.toString(),"HMERC721")
 
-    //   console.log("From Address", from.address, "initiated a trasfer to", to.address)
-    //   expect(fromBalance).to.equal(1);
-    //   await homeMade.connect(from).safeTransfer(to.address, 1);
-    //   const fromNewBalance = await homeMade.balanceOf(from.address);
-    //   console.log("after from address, ", from.address, "transfer", fromBalance.toString(), "to to address:", to.address, "new balance of from is: ",fromNewBalance.toString() )
-    //   const toBalance = await homeMade.balanceOf(to.address);
-    //   console.log( "Balance of to increased", toBalance.toString(),"HMERC721")
-    //   expect(fromNewBalance).to.equal(0);
-    //   expect(toBalance).to.equal(1);
-    // });
+    it("Should be able to transferFrom `to` when approve", async function () {   
+      console.log(to.address, "Minting......") 
+      await homeMade.connect(to).mint(1);
+      console.log("to address:", to.address, "approving", from.address);
+
+      await homeMade.connect(to).approve(from.address, 1);
+      const whoIsApproved = await homeMade.getApproved(1);
+
+      expect(whoIsApproved).to.equal(from.address);
+      // const getApprovedID = await homeMade.isApprovedForAll(to.address, from.address);
+      // console.log(getApprovedID);
+      // expect(getApprovedID).to.equal(true);
+
+      const toBalanceBeforeTransfer = await homeMade.balanceOf(to.address);
+      const fromInitialBalance = await homeMade.balanceOf(from.address);
+      console.log( "Balance of to before transfer: ", toBalanceBeforeTransfer.toString(),"HMERC721")
+      console.log("from initial balance is, ", fromInitialBalance.toString(), "before transferring from", to.address )
+      console.log("From Address", from.address, "initiated a trasferFrom to", to.address)
+      expect(fromInitialBalance).to.equal(0);
+
+      await homeMade.connect(from).transferFrom(to.address, from.address,  1);
+
+      const fromNewBalance = await homeMade.balanceOf(from.address);
+      console.log("after from address, ", from.address, "transfer from", to.address, "new balance of from is: ",fromNewBalance.toString() )
+      
+      const toBalance = await homeMade.balanceOf(to.address);
+      console.log( "Balance of to decrease to", toBalance.toString(),"HMERC721")
+      expect(fromNewBalance).to.equal(1);
+      expect(toBalance).to.equal(0);
+    });
 
   });
 
