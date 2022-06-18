@@ -105,6 +105,26 @@ contract HomeMadeERC721 is Context, ERC165 {
         return ds._operatorApprovals[owner][operator];
     }
 
+
+    /**
+     * @dev Transfers `tokenId` from `from` to `to`.
+     *  As opposed to {transferFrom}, this imposes no restrictions on msg.sender.
+     *
+     * Requirements:
+     *
+     * - `to` cannot be the zero address.
+     * - `tokenId` token must be owned by `from`.
+     *
+     * Emits a {Transfer} event.
+     */
+    function safeTransfer(
+        address _to,
+        uint256 tokenId
+    ) external {
+        _transfer(_msgSender(), _to, tokenId);
+        if(!(_checkOnERC721Received(_msgSender(), _to, tokenId, ""))) revert NonReceiver_Implementer();
+    }
+
     /**
      * @dev See {IERC721-transferFrom}.
      */
@@ -300,17 +320,6 @@ contract HomeMadeERC721 is Context, ERC165 {
         _afterTokenTransfer(owner, address(0), tokenId);
     }
 
-    /**
-     * @dev Transfers `tokenId` from `from` to `to`.
-     *  As opposed to {transferFrom}, this imposes no restrictions on msg.sender.
-     *
-     * Requirements:
-     *
-     * - `to` cannot be the zero address.
-     * - `tokenId` token must be owned by `from`.
-     *
-     * Emits a {Transfer} event.
-     */
     function _transfer(
         address from,
         address to,
