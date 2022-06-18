@@ -100,10 +100,6 @@ describe("Deploying HomeMadeERC721 Contract...", function () {
       const whoIsApproved = await homeMade.getApproved(1);
 
       expect(whoIsApproved).to.equal(from.address);
-      // const getApprovedID = await homeMade.isApprovedForAll(to.address, from.address);
-      // console.log(getApprovedID);
-      // expect(getApprovedID).to.equal(true);
-
       const toBalanceBeforeTransfer = await homeMade.balanceOf(to.address);
       const fromInitialBalance = await homeMade.balanceOf(from.address);
       console.log( "Balance of to before transfer: ", toBalanceBeforeTransfer.toString(),"HMERC721")

@@ -69,6 +69,32 @@ describe("Deploying HomeMadeERC721 Contract...", function () {
         expect(toBalance).to.equal(1);
       });
 
+      it("Should revert when transferring to contract address", async function () {   
+        console.log(to.address, "Minting......") 
+        await homeMade.connect(to).mint(1);
+        const to_Balance = await homeMade.balanceOf(to.address);
+        expect(to_Balance).to.equal(1);
+        const contractBalance = await homeMade.balanceOf(homeMade.address);
+
+        console.log( "Balance of to transfer: ", to_Balance.toString(),"HMERC721")
+        console.log("contract address balance is, ", contractBalance.toString(), "before", to.address, "tries transfer in to it." )
+        console.log("From Address", homeMade.address, "initiated a trasferFrom to", to.address)
+        expect(contractBalance).to.equal(0);
+
+        await expect(homeMade.connect(to).safeTransfer(homeMade.address, 1)).to.be.revertedWith(
+            'NonReceiver_Implementer'
+        );
+
+        const ContractNewBalance = await homeMade.balanceOf(homeMade.address);
+        console.log("after to address, ", to.address, "tried transferring to", homeMade.address, "and it revert, balance remain: ",ContractNewBalance.toString() )
+        
+        const toBalance = await homeMade.balanceOf(to.address);
+        console.log( "Balance of to decrease to", toBalance.toString(),"HMERC721")
+
+        expect(ContractNewBalance).to.equal(0);
+        expect(toBalance).to.equal(1);
+      });
+
   });
 
 });
