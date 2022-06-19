@@ -11,18 +11,18 @@ contract HomeMadeERC721 is Context, ERC165 {
     // using Address for address;
     using Strings for uint256;
 
-    // bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address holder,address spender,uint256 nonce,uint256 expiry,bool allowed)");
-    bytes32 public constant PERMIT_TYPEHASH = 0xea2aa0a1be11a07ed86d755c93467f4f82362b452371d1ba94d1715123511acb;
+    // bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address holder,address operator,uint256 tokenID,bool allowed)");
+    bytes32 public constant PERMIT_TYPEHASH = 0x757361ccdc389141dd4dbcf6d424c30e29013149edf6da6c4eeacf2457ec8540;
 
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
     constructor(string memory name_, string memory symbol_) {
         homeMadeMapped.libStorage storage ds = homeMadeMapped.diamondStorage();
-        ds.DOMAIN_SEPARATOR = keccak256(abi.encode(
+        ds.DOMAIN_SEPARATOR = keccak256(abi.encodePacked(
             keccak256("EIP712Domain(string name,string symbol,address verifyingContract)"),
-            keccak256(bytes(name_)),
-            keccak256(bytes(symbol_)),
+            keccak256(bytes("Home Made ERC721")),
+            keccak256(bytes("HMERC721")),
             address(this)
         ));
         ds._name = name_;
@@ -76,6 +76,11 @@ contract HomeMadeERC721 is Context, ERC165 {
         return ds._symbol;
     }
 
+    function domain_seperator() public view returns (bytes32) {
+        homeMadeMapped.libStorage storage ds = homeMadeMapped.diamondStorage();
+        return ds.DOMAIN_SEPARATOR;
+    }
+
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
@@ -105,11 +110,10 @@ contract HomeMadeERC721 is Context, ERC165 {
         bytes32 r, 
         bytes32 s
     ) external {
-        homeMadeMapped.libStorage storage ds = homeMadeMapped.diamondStorage();
         bytes32 digest =
         keccak256(abi.encodePacked(
             "\x19\x01",
-            ds.DOMAIN_SEPARATOR,
+            domain_seperator(),
             keccak256(abi.encode(
                 PERMIT_TYPEHASH,
                 owner,
@@ -117,11 +121,16 @@ contract HomeMadeERC721 is Context, ERC165 {
                 tokenId))
         ));
 
+        bytes32 salt = 
+            keccak256(
+                abi.encodePacked("\x19Ethereum Signed Message:\n32", digest)
+        );
+
         if (HomeMadeERC721.ownerOf(tokenId) != owner) revert incorrectOwner();
         if (owner == operator) revert selfApproval();
         if (isApprovedForAll(owner, operator)) revert notAllow();
         if (owner == address(0)) revert nonexistent();
-        if (owner != ecrecover(digest, v, r, s)) revert invalidPermit();
+        if (owner != ecrecover(salt, v, r, s)) revert invalidPermit();
         _approve(operator, tokenId);
     }
 
@@ -134,11 +143,10 @@ contract HomeMadeERC721 is Context, ERC165 {
         bytes32 r, 
         bytes32 s
     ) external {
-        homeMadeMapped.libStorage storage ds = homeMadeMapped.diamondStorage();
         bytes32 digest =
         keccak256(abi.encodePacked(
             "\x19\x01",
-            ds.DOMAIN_SEPARATOR,
+            domain_seperator(),
             keccak256(abi.encode(
                 PERMIT_TYPEHASH,
                 owner,
@@ -146,9 +154,14 @@ contract HomeMadeERC721 is Context, ERC165 {
                 allowed))
         ));
 
+        bytes32 salt = 
+            keccak256(
+                abi.encodePacked("\x19Ethereum Signed Message:\n32", digest)
+        );
+
         if (owner == address(0)) revert nonexistent();
         if (owner == operator) revert selfApproval();
-        if (owner != ecrecover(digest, v, r, s)) revert invalidPermit();
+        if (owner != ecrecover(salt, v, r, s)) revert invalidPermit();
         _setApprovalForAll(owner, operator, allowed);
     }
 
