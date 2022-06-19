@@ -97,6 +97,35 @@ contract HomeMadeERC721 is Context, ERC165 {
     }
 
     // --- Approve by signature ---
+    function permit(
+        address owner, 
+        address operator, 
+        uint256 tokenId,
+        uint8 v, 
+        bytes32 r, 
+        bytes32 s
+    ) external {
+        homeMadeMapped.libStorage storage ds = homeMadeMapped.diamondStorage();
+        bytes32 digest =
+        keccak256(abi.encodePacked(
+            "\x19\x01",
+            ds.DOMAIN_SEPARATOR,
+            keccak256(abi.encode(
+                PERMIT_TYPEHASH,
+                owner,
+                operator,
+                tokenId))
+        ));
+
+        if (HomeMadeERC721.ownerOf(tokenId) != owner) revert incorrectOwner();
+        if (owner == operator) revert selfApproval();
+        if (isApprovedForAll(owner, operator)) revert notAllow();
+        if (owner == address(0)) revert nonexistent();
+        if (owner != ecrecover(digest, v, r, s)) revert invalidPermit();
+        _approve(operator, tokenId);
+    }
+
+    // --- Approve by signature ---
     function permitForAll(
         address owner, 
         address operator, 
@@ -110,13 +139,15 @@ contract HomeMadeERC721 is Context, ERC165 {
         keccak256(abi.encodePacked(
             "\x19\x01",
             ds.DOMAIN_SEPARATOR,
-            keccak256(abi.encode(PERMIT_TYPEHASH,
+            keccak256(abi.encode(
+                PERMIT_TYPEHASH,
                 owner,
                 operator,
                 allowed))
         ));
 
         if (owner == address(0)) revert nonexistent();
+        if (owner == operator) revert selfApproval();
         if (owner != ecrecover(digest, v, r, s)) revert invalidPermit();
         _setApprovalForAll(owner, operator, allowed);
     }

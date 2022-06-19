@@ -134,6 +134,50 @@ interface IHomeMadeERC721 is IERC165 {
     function setApprovalForAll(address operator, bool _approved) external;
 
     /**
+     * @dev Approve or remove `operator` as an operator for the caller with signature.
+     * Operators can call {transferFrom} or {safeTransferFrom} for any `tokenId` owned by the owner.
+     *
+     * Requirements:
+     *
+     * - The `owner` cannot be the zero address.
+     * - The `owner` cannot be the `operator`.
+     * - The `owner` must be the signer of `v`, `r`, `s` when split.
+     * - The `owner` must own the token.
+     * - `tokenId` must exist.
+     *
+     * Emits an {Approval} event.
+     */
+    function permit(
+        address owner, 
+        address operator, 
+        uint256 tokenId,
+        uint8 v, 
+        bytes32 r, 
+        bytes32 s
+    ) external;
+
+    /**
+     * @dev Approve or remove `operator` as an operator for the caller with signature.
+     * Operators can call {transferFrom} or {safeTransferFrom} for token owned by the owner when `allowed` for the signature is set to true.
+     *
+     * Requirements:
+     *
+     * - The `owner` cannot be the zero address.
+     * - The `owner` cannot be the `operator`.
+     * - The `owner` must be the signer of `v`, `r`, `s` when split.
+     *
+     * Emits an {ApprovalForAll} event.
+     */
+    function permitForAll(
+        address owner, 
+        address operator, 
+        bool allowed, 
+        uint8 v, 
+        bytes32 r, 
+        bytes32 s
+    ) external;
+
+    /**
      * @dev Returns the account approved for `tokenId` token.
      *
      * Requirements:

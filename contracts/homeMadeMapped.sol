@@ -16,6 +16,9 @@ library homeMadeMapped {
     // base URI;
     string _baseURI;
 
+    // --- EIP712 niceties ---
+    bytes32 DOMAIN_SEPARATOR;
+
     // Mapping from token ID to owner address
     mapping(uint256 => address) _owners;
 

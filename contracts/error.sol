@@ -21,3 +21,5 @@ error notApproved();
 error NonReceiver_Implementer();
 // HomeMadeERC721: transfer from incorrect owner
 error incorrectOwner();
+// HomeMadeERC721: Invalid Permit
+error invalidPermit();
