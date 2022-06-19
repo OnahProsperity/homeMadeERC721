@@ -139,6 +139,44 @@ describe("Deploying HomeMadeERC721 Contract Test Custom Error...", function () {
       );
     });
 
+    it("Should revert with invalid signature on approving token ID", async function () {   
+      const signature =
+        "0x5782287f4d9c8da7b06c087ebebf48533255640246aed4422323bfa53df8262b1d0171f0ce105858d0595477a3fa6bf9b265de6d5db33cd97189254ee8eb81081b";
+        var sig = ethers.utils.splitSignature(signature)
+        await homeMade.connect(owner).mint(1);
+        await expect(homeMade.connect(to).permit(
+          owner.address, 
+          to.address, 
+          1,
+          sig.v, 
+          sig.r, 
+          sig.s
+        )).to.be.revertedWith(
+            'invalidPermit'
+        );
+        const getApprove = await homeMade.getApproved(1)
+        expect(getApprove).to.equal(ZERO_ADDRESS);
+    });
+
+    it("Should revert with invalid signature on approving Permit for all", async function () {   
+      const signature =
+        "0x5782287f4d9c8da7b06c087ebebf48533255640246aed4422323bfa53df8262b1d0171f0ce105858d0595477a3fa6bf9b265de6d5db33cd97189254ee8eb81081b";
+        var sig = ethers.utils.splitSignature(signature)
+        await homeMade.connect(owner).mint(1);
+        await expect(homeMade.connect(to).permitForAll(
+          owner.address, 
+          to.address, 
+          true,
+          sig.v, 
+          sig.r, 
+          sig.s
+        )).to.be.revertedWith(
+            'invalidPermit'
+        );
+        const getApprove = await homeMade.isApprovedForAll(owner.address, to.address)
+        expect(getApprove).to.eq(false);
+    });
+
     it("Should revert when try to burn an invalid token", async function () {   
       await homeMade.connect(to).mint(1);
 
