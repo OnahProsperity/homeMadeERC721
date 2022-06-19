@@ -128,6 +128,40 @@ describe("Deploying HomeMadeERC721 Contract...", function () {
       expect(fromNewBalance).to.equal(1);
       expect(toBalance).to.equal(0);
     });
+
+    it("Should be able to approve a token ID using permit", async function () {   
+      const signature =
+        "0x4782287f4d9c8da7b06c087ebebf48533255640246aed4422323bfa53df8262b1d0171f0ce105858d0595477a3fa6bf9b265de6d5db33cd97189254ee8eb81081b";
+        var sig = ethers.utils.splitSignature(signature)
+        await homeMade.connect(owner).mint(1);
+        await homeMade.connect(to).permit(
+          owner.address, 
+          to.address, 
+          1,
+          sig.v, 
+          sig.r, 
+          sig.s
+        )
+        const getApprove = await homeMade.getApproved(1)
+        expect(getApprove).to.equal(to.address);
+    });
+
+    it("Should be able to safeApprove for All using permit", async function () {   
+      const signature =
+        "0x658b96de5b51100dce70e8bde811d3bfdc75f4e924740ece41c96da5a47bdbe957b72511dc2461a1c9be61f6d041d45d326af5510d3ec70335f52ef149ff08911b";
+        var sig = ethers.utils.splitSignature(signature)
+        await homeMade.connect(owner).mint(1);
+        await homeMade.connect(to).permitForAll(
+          owner.address, 
+          to.address, 
+          true,
+          sig.v, 
+          sig.r, 
+          sig.s
+        )
+        const getApprove = await homeMade.isApprovedForAll(owner.address, to.address)
+        expect(getApprove).to.eq(true);
+    });
   });
 
   describe('exists', async function () {
