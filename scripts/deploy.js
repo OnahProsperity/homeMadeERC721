@@ -14,17 +14,19 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const mint = await hre.ethers.getContractFactory("mintHomeMadeERC721");
+  const homeMadeERC721 = await mint.deploy("Home Made ERC721", "HMERC721");
 
-  await greeter.deployed();
+  await homeMadeERC721.deployed();
 
-  console.log("Greeter deployed to:", greeter.address);
+  console.log("Home Made ERC721 is deployed to:", homeMadeERC721.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
-main().catch((error) => {
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
