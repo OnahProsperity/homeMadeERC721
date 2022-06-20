@@ -47,6 +47,18 @@ interface IHomeMadeERC721 is IERC165 {
     function ownerOf(uint256 tokenId) external view returns (address owner);
 
     /**
+     * @dev Moves `amount` tokens from the caller's account to `recipient`.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * Emits a {Transfer} event.
+     */
+    function safeTransfer(
+        address _to,
+        uint256 tokenId
+    ) external;
+
+    /**
      * @dev Safely transfers `tokenId` token from `from` to `to`.
      *
      * Requirements:
@@ -176,6 +188,11 @@ interface IHomeMadeERC721 is IERC165 {
         bytes32 r, 
         bytes32 s
     ) external;
+
+    /**
+     * --- EIP712 niceties ---
+     */
+    function domain_seperator() external view returns (bytes32);
 
     /**
      * @dev Returns the account approved for `tokenId` token.
