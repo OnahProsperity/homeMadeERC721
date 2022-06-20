@@ -12,7 +12,7 @@ The goal of Homemade ERC721 is to provide an update on the implementation of IER
 
 ![Gas Savings](https://miro.medium.com/max/700/1*eOAx7Ai0EH6BYc87I1Mdrg.png)
 
-[Onah Prosper](https://onahprosperity.github.io/) created the improved version of ERC721 (Home Made ERC721) for a reason. [EIP721 standard](https://eips.ethereum.org/EIPS/eip-721) was created in 2018-01-24 and has not been updated for a while. There are some new improved functions like transfer(), permit(), permitForAll() that has been added to the Home Made ERC721. Special Thanks to [Polygon Network](https://polygon.technology/) as this won't have been done without them.
+[Onah Prosper](https://onahprosperity.github.io/) created the improved version of ERC721 (Home Made ERC721) for a reason. [EIP721 standard](https://eips.ethereum.org/EIPS/eip-721) was created in 2018-01-24 and has not been updated for a while. There are some new improved functions like `transfer()`, `permit()`, `permitForAll()`, and `setURI()` that has been added to the Home Made ERC721. Special Thanks to [Polygon Network](https://polygon.technology/) as this won't have been done without them.
 
 
 ![New Functionality](https://miro.medium.com/max/700/1*Gm2AcosUOfmzO-n-Z1JhWA.png)
@@ -27,7 +27,7 @@ require(msg.sender != address(0), "here with a long strings to explain why");
 ```
 but they are rather expensive, especially when it comes to deployment cost, and it is difficult to use dynamic information in them.
 Custom errors are defined using the error statement, which can be used inside and outside of contracts (including interfaces and libraries).
-More on custom error [Custom Error](https://favoriteblockchain.medium.com/solidity-custom-error-a-way-to-save-gas-b731fdd648c0). So in Home Made ERC721, require statements are replaced with custom errors in other to save gas. See the percentage differences above.
+More on [Custom Error](https://favoriteblockchain.medium.com/solidity-custom-error-a-way-to-save-gas-b731fdd648c0). So in Home Made ERC721, require statements are replaced with custom errors in other to save gas. See the percentage differences above.
 
 
 ## Adding safe Transfer Function
@@ -64,12 +64,12 @@ function permit(
     ) external;
 
 ```
-This permit works in a way to transfer a single NFT from `owner` on recieving the signature and spliting it to get the v,r,s.
+This permit works in a way to approve a single NFT from `owner` on recieving the signature and spliting it to get the v,r,s.
 [Home Made ERC721: Permit() Transaction Hash](https://mumbai.polygonscan.com/tx/0x5832ed2ec99006c87a11aac2d28765330be1c287a094e91c9ae403daa86422b4)
 
 The other type of permit is:
 ## Permit for All.
-As the name implies, it allowS unending transfer of NFT from `owner` in a way,
+As the name implies, it allows unending transfer of NFT from `owner` in a way,
 ```solidity
 function permitForAll(
         address owner, 
@@ -103,14 +103,13 @@ Once installed, you can use the contracts in the library by importing them:
 ```solidity
 pragma solidity ^0.8.4;
 
-import "/contracts/HomeMadeERC721.sol"; // might consider NPM package
+import "./HomeMadeERC721.sol"; // might consider NPM package
 
 contract HMERC721 is HomeMadeERC721 {
     constructor() HomeMadeERC721("Home Made ERC721", "HMERC721") {}
 
     function mint(uint256 tokenId) external payable {
-        // `_mint`'s second argument now takes in a `quantity`, not a `tokenId`.
-        _mint(msg.sender, quantity);
+        _mint(msg.sender, tokenId);
     }
 }
 
@@ -150,7 +149,6 @@ Don't forget to give the project a star! Thanks again!
 - Email (owner) - [Gmail](prosperauthor@gmail.com)
 - Coffee? (owner) - [otor.eth](https://etherscan.io/enslookup-search?search=otor.eth)
 
-Project Link: [https://github.com/chiru-labs/ERC721A](https://github.com/chiru-labs/ERC721A)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 
