@@ -6,13 +6,13 @@
 
 <!-- ABOUT THE PROJECT -->
 
-## INTRODUCING Homemade ERC721 AN IMPROVED ERC721 IMPLEMENTATION
+## INTRODUCING Homemade ERC721, AN IMPROVED ERC721 IMPLEMENTATION
 
-The goal of Homemade ERC721 is to provide a an update on implementation of IERC721 with significant gas savings for minting NFTs and add [EIP721 Permit](https://eips.ethereum.org/EIPS/eip-712) functionality. This project and implementation is likely going to be updated regularly and will continue to stay up to date with best practices.
+The goal of Homemade ERC721 is to provide an update on the implementation of IERC721 with significant gas savings for minting NFTs  an added [EIP721 Permit](https://eips.ethereum.org/EIPS/eip-712) functionality. This project and implementation is likely going to be updated regularly and will continue to stay up to date with best practices.
 
 ![Gas Savings](https://miro.medium.com/max/700/1*eOAx7Ai0EH6BYc87I1Mdrg.png)
 
-[Onah Prosper](https://onahprosperity.github.io/) created the improved version of ERC721 (Home Made ERC721) for a reason. [EIP721 standard](https://eips.ethereum.org/EIPS/eip-721) created in 2018-01-24 and has not been updated for a while so there are some new improved functions like transfer(), permit(), permitForAll() that has been added to the Home Made ERC721. Special Thanks to [Polygon Network](https://polygon.technology/) as this won't have been done without them.
+[Onah Prosper](https://onahprosperity.github.io/) created the improved version of ERC721 (Home Made ERC721) for a reason. [EIP721 standard](https://eips.ethereum.org/EIPS/eip-721) was created in 2018-01-24 and has not been updated for a while. There are some new improved functions like transfer(), permit(), permitForAll() that has been added to the Home Made ERC721. Special Thanks to [Polygon Network](https://polygon.technology/) as this won't have been done without them.
 
 
 ![New Functionality](https://miro.medium.com/max/700/1*Gm2AcosUOfmzO-n-Z1JhWA.png)
@@ -25,16 +25,17 @@ revert("Insufficient funds.");
 require(msg.sender != address(0), "here with a long strings to explain why");
 
 ```
-but they are rather expensive, especially when it comes to deploy cost, and it is difficult to use dynamic information in them.
+but they are rather expensive, especially when it comes to deployment cost, and it is difficult to use dynamic information in them.
 Custom errors are defined using the error statement, which can be used inside and outside of contracts (including interfaces and libraries).
-more on custom error [blog.solidity](https://blog.soliditylang.org/2021/04/21/custom-errors/) so in Home Made ERC721 require statement are replaced with custom error in other to save gas, Percentage differences above.
+More on custom error [Custom Error](https://favoriteblockchain.medium.com/solidity-custom-error-a-way-to-save-gas-b731fdd648c0). So in Home Made ERC721, require statements are replaced with custom errors in other to save gas. See the percentage differences above.
 
 
-## adding safe Transfer Function
-Why do we need transfer function? currently on [EIP721](https://eips.ethereum.org/EIPS/eip-712), for instance, it is not possible for Alice to decide to transfer her NFT to Bob directly it either of this scenero has to be done before Bob can get the NFT from Alice.
-1. Alice use the approve function to approve Bod to be able to transfer the NFT from her and Bod has to trigger the transferFrom method in other to withdraw the NFT from Alice, spending gas in multiple transaction from what we have above that will cost 134,747 gas for both transaction.
-2. Second scenero which is very difficult and cost more gas is to use a smart contract as an intermidiary.
-So adding safeTransfer function that only cost 59,543 instead of 134,747 saving about 44.19%.
+## Adding safe Transfer Function
+Why do we need transfer function? 
+Currently on [EIP721](https://eips.ethereum.org/EIPS/eip-712), for instance, it is not possible for Alice to decide to transfer her NFT to Bob directly. Either this event has to be done before Bob can get the NFT from Alice.
+1. Alice uses the "approve()" function to approve Bob to be able to transfer the NFT from her and Bob has to trigger the "transferFrom()" method in other to transfer the NFT from Alice. This leads to spending of gas in multiple transaction. From what we have above, it will cost both Alice and Bob 134,747 gas fee.
+2. Second scenerio which is very difficult and cost more gas is using a smart contract as an intermidiary.
+So adding "safeTransfer()" function that only costs 59,543 instead of 134,747 saves about 44.19% gas fee.
 ```solidity
 
 function safeTransfer(
@@ -43,13 +44,13 @@ function safeTransfer(
     ) external;
 
 ```
-save from all the stress and funds.
+Saves from all the stress and funds.
 
-## adding Permit functionality
+## Adding Permit functionality
 After Ethereum wallets like MetaMask implemented [EIP721 standard](https://eips.ethereum.org/EIPS/eip-721) for typed message signing that allows wallets to display data in signing prompts in a structured and readable format. EIP712 is a great step forward for security and usability because users will no longer need to sign off on inscrutable hexadecimal strings, which is a practice that can be confusing and insecure.
-Lots of Project have started implementing this logic [Popular Dai](https://makerdao.com/en/) have it implemented on their stable coin [DAI Etherscan](https://etherscan.io/address/0x6b175474e89094c44da98b954eedeac495271d0f#code).
-Intoducing EIP712 into Home Made ERC721 in other to allow for gasless transactions on open market.
-Instance: Bob signed a message and send the signature to Alice, Alice spilt the signature in other to get the V,R,S and use it to approve himself in other to transfer NFT from Bob.
+Lots of Project have started implementing this logic. [Popular Dai](https://makerdao.com/en/) They have it implemented on their stable coin [DAI Etherscan](https://etherscan.io/address/0x6b175474e89094c44da98b954eedeac495271d0f#code).
+Introducing EIP712 into Home Made ERC721 in order to allow for gasless transactions on open market.
+Instance: Bob signed a message and sends the signature to Alice. Alice spilts the signature in order to get the v,r,s and use it to approve herself in order to transfer NFT from Bob.
 ```solidity
 
 function permit(
@@ -62,10 +63,10 @@ function permit(
     ) external;
 
 ```
-This permit works in a way to transfer a single NFT from `owner` on recieved of the signature and spliting it to get the v,r,s.
+This permit works in a way to transfer a single NFT from `owner` on recieving the signature and spliting it to get the v,r,s.
 The other type of permit is:
 ## Permit for All.
-As the name implies, it allow unending transfer of NFT from `owner` in a way,
+As the name implies, it allowS unending transfer of NFT from `owner` in a way,
 ```solidity
 function permitForAll(
         address owner, 
@@ -76,7 +77,7 @@ function permitForAll(
         bytes32 s
     ) external;
 ```
-if Bob signed a message and set allowed to be true then means unending transfer if false that will dis approve the `operator` (Alice) from future withdraw.
+if Bob signs a message and sets "allowed" to be true, then it means unending transfer. If false, that will disapprove the `operator` (Alice) from future withdrawal.
 
 ## Base URL now setable
 Token URL can now be setable.
