@@ -24,6 +24,11 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   solidity: "0.8.8",
   networks: {
+    matic: {
+      url: process.env.MATIC_URL,
+      accounts:
+        process.env.MATIC_PRIVATE_KEY !== undefined ? [process.env.MATIC_PRIVATE_KEY] : [],
+    },
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
       accounts:
@@ -35,6 +40,7 @@ module.exports = {
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    // npx hardhat verify --network mainnet DEPLOYED_CONTRACT_ADDRESS "Constructor argument 1"
+    apiKey: process.env.MATIC_API,
   },
 };
