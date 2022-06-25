@@ -102,6 +102,7 @@ contract HomeMadeERC721 is Context, ERC165 {
     }
 
     // --- Approve by signature ---
+    // See for future possible update: [ERC-4337 ](https://notes.ethereum.org/@vbuterin/account_abstraction_roadmap?utm_source=substack&utm_medium=email)
     function permit(
         address owner, 
         address operator, 
@@ -135,6 +136,7 @@ contract HomeMadeERC721 is Context, ERC165 {
     }
 
     // --- Approve by signature ---
+    // See for future possible update: [ERC-4337 ](https://notes.ethereum.org/@vbuterin/account_abstraction_roadmap?utm_source=substack&utm_medium=email)
     function permitForAll(
         address owner, 
         address operator, 
