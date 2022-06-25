@@ -52,6 +52,7 @@ After Ethereum wallets like MetaMask implemented [EIP721 standard](https://eips.
 Lots of Project have started implementing this logic. [Popular Dai](https://makerdao.com/en/) They have it implemented on their stable coin [DAI Etherscan](https://etherscan.io/address/0x6b175474e89094c44da98b954eedeac495271d0f#code).
 Introducing EIP712 into Home Made ERC721 in order to allow for gasless transactions on open market.
 Instance: Bob signed a message and sends the signature to Alice. Alice spilts the signature in order to get the v,r,s and use it to approve herself in order to transfer NFT from Bob.
+A Note: might proceed to use [ERC1271](https://eips.ethereum.org/EIPS/eip-1271) due to that the release of [ERC-4337 ](https://notes.ethereum.org/@vbuterin/account_abstraction_roadmap?utm_source=substack&utm_medium=email) visit for more details.
 ```solidity
 
 function permit(
