@@ -91,8 +91,47 @@ function _setBaseURI(string memory _uri);
 ```
 
 ## Introducing LibStorage
-Just a Free style.
+This contract could store a struct called `libStorage` at position `keccak256("HOME MADE ERC721")`;
+Find answer to what Library Storage [here](https://dev.to/mudgen/solidity-libraries-can-t-have-state-variables-oh-yes-they-can-3ke9)
+The struct contain all the state variables related to Home Made ERC721 functionality that the Home Made ERC721 contract reads and writes.
+There are a couple nice advantages to this:
+1. First that the Home Made ERC721 contract is reusable. The Home Made ERC721 contract can be deployed only once, and the deployed Home Made ERC721 contract can be used with multiple different contracts that use delegatecall with it and that are using different state variables.
+2. Another nice thing is that the Home Made ERC721 contract is not cluttered with state variable declarations of variables it doesn’t use.
 
+```solidity
+library homeMadeMapped {
+    struct libStorage {
+        // Token name
+    string _name;
+
+    // Token symbol
+    string _symbol;
+
+    // base URI;
+    string _baseURI;
+
+    // --- EIP712 niceties ---
+    bytes32 DOMAIN_SEPARATOR;
+
+    // Mapping from token ID to owner address
+    mapping(uint256 => address) _owners;
+
+    // Mapping owner address to token count
+    mapping(address => uint256) _balances;
+
+    // Mapping from token ID to approved address
+    mapping(uint256 => address) _tokenApprovals;
+
+    // Mapping from owner to operator approvals
+    mapping(address => mapping(address => bool)) _operatorApprovals;
+    }
+
+    function diamondStorage() internal pure returns(libStorage storage ds) {
+        bytes32 storagePosition = keccak256("HOME MADE ERC721");
+        assembly {ds.slot := storagePosition}
+    }
+}
+```
 
 ## Deployment Link
 [Home Made ERC721 Contract Deployment](https://mumbai.polygonscan.com/address/0xfEEAcBb3e303101e0BAFD90C940397e57C37b5f5)
