@@ -126,6 +126,8 @@ library homeMadeMapped {
     mapping(address => mapping(address => bool)) _operatorApprovals;
     }
 
+    // Note that different libraries will need to use different storage slots and so use a different keccak256ed string. 
+    // This is to prevent two or more libraries writing to the same locations in contract storage
     function diamondStorage() internal pure returns(libStorage storage ds) {
         bytes32 storagePosition = keccak256("HOME MADE ERC721");
         assembly {ds.slot := storagePosition}
