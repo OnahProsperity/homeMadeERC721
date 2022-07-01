@@ -33,7 +33,8 @@ library homeMadeMapped {
     }
 
     function diamondStorage() internal pure returns(libStorage storage ds) {
-        bytes32 storagePosition = keccak256("HOME MADE ERC721");
+        bytes memory defaultName = "HOME MADE ERC721";
+        bytes32 storagePosition = keccak256(defaultName);
         assembly {ds.slot := storagePosition}
     }
 }
